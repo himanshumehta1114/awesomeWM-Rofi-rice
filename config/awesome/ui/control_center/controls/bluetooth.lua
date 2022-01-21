@@ -2,7 +2,6 @@ local awful = require "awful"
 local beautiful = require "beautiful"
 local gears = require "gears"
 local wibox = require "wibox"
-local helpers = require "helpers"
 
 local bluetooth = wibox.widget {
   {
@@ -23,8 +22,6 @@ local bluetooth = wibox.widget {
     gears.shape.squircle(cr, width, height, 2, 0)
   end,
 }
-
-helpers.add_hover_cursor(bluetooth, "hand1")
 
 -- thanks to nes
 local on = beautiful.control_center_button_bg

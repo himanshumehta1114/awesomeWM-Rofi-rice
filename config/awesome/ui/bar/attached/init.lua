@@ -2,16 +2,20 @@ local awful = require "awful"
 local wibox = require "wibox"
 local beautiful = require "beautiful"
 local gears = require "gears"
-local helpers = require "helpers"
+local net_widgets = require "net_widgets"
+
+local net_wireless = net_widgets.wireless()
 
 local battery = wibox.widget {
   bg = beautiful.bg_normal,
   fg = beautiful.fg_bat,
-  shape = helpers.rrect(9),
+  shape = function(cr, width, height)
+    gears.shape.rounded_rect(cr, width, height, 9)
+  end,
   widget = wibox.container.background,
   {
     {
-      widget = awful.widget.watch("status bat", 30),
+      widget = awful.widget.watch("cat /sys/class/power_supply/BAT0/capacity", 30),
     },
     left = 7,
     right = 7,
@@ -24,7 +28,9 @@ local battery = wibox.widget {
 local time = wibox.widget {
   bg = beautiful.bg_normal,
   fg = beautiful.fg_time,
-  shape = helpers.rrect(9),
+  shape = function(cr, width, height)
+    gears.shape.rounded_rect(cr, width, height, 9)
+  end,
   widget = wibox.container.background,
   buttons = {
     awful.button({}, 1, function()
@@ -36,12 +42,12 @@ local time = wibox.widget {
   },
 }
 
-helpers.add_hover_cursor(time, "hand1")
-
 local layoutbox = wibox.widget {
   bg = beautiful.bg_normal,
   fg = beautiful.fg_time,
-  shape = helpers.rrect(9),
+  shape = function(cr, width, height)
+    gears.shape.rounded_rect(cr, width, height, 9)
+  end,
   widget = wibox.container.background,
   buttons = {
     awful.button({}, 1, function()
@@ -63,8 +69,6 @@ local layoutbox = wibox.widget {
     },
   },
 }
-
-helpers.add_hover_cursor(layoutbox, "hand1")
 
 screen.connect_signal("request::desktop_decoration", function(s)
   local l = awful.layout.suit
@@ -96,6 +100,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
           },
         },
         {
+          { widget = net_wireless },
           { widget = battery },
           { widget = time },
           { widget = layoutbox },

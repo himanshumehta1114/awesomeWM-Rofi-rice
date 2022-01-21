@@ -3,7 +3,6 @@ local beautiful = require "beautiful"
 local gears = require "gears"
 local naughty = require "naughty"
 local wibox = require "wibox"
-local helpers = require "helpers"
 
 local dnd = wibox.widget {
   {
@@ -24,8 +23,6 @@ local dnd = wibox.widget {
     gears.shape.squircle(cr, width, height, 2, 0)
   end,
 }
-
-helpers.add_hover_cursor(dnd, "hand1")
 
 local on = beautiful.control_center_button_bg
 local off = beautiful.control_center_button_bg_off

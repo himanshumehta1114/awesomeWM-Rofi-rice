@@ -1,11 +1,10 @@
 local awful = require "awful"
 local beautiful = require "beautiful"
 local gears = require "gears"
-local helpers = require "helpers"
 local wibox = require "wibox"
 
 local time = wibox.widget {
-  font = "Iosevka Nerd Font Mono Bold 80",
+  font = beautiful.font_name .. " Bold 60",
   format = "%H:%M",
   align = "center",
   widget = wibox.widget.textclock,
@@ -28,12 +27,14 @@ local date = wibox.widget {
       spacing = 5,
     },
     widget = wibox.container.margin,
-    margins = 20,
+    margins = 15,
   },
   widget = wibox.widget.background,
   bg = beautiful.bg_normal,
-  shape = helpers.rrect(9),
-  forced_height = 85,
+  shape = function(cr, width, height)
+    gears.shape.rounded_rect(cr, width, height, 9)
+  end,
+  forced_height = 75,
 }
 
 local mem = wibox.widget {
@@ -43,13 +44,10 @@ local mem = wibox.widget {
     widget = wibox.container.margin,
   },
   widget = wibox.container.background,
-  buttons = {
-    awful.button({}, 1, function()
-      awful.spawn "kitty -e btm"
-    end),
-  },
   bg = beautiful.bg_normal,
-  shape = helpers.rrect(9),
+  shape = function(cr, width, height)
+    gears.shape.rounded_rect(cr, width, height, 9)
+  end,
   forced_height = 150,
 }
 
@@ -60,27 +58,23 @@ local cpu = wibox.widget {
     widget = wibox.container.margin,
   },
   widget = wibox.container.background,
-  buttons = {
-    awful.button({}, 1, function()
-      awful.spawn "kitty -e btm"
-    end),
-  },
   bg = beautiful.bg_normal,
-  shape = helpers.rrect(9),
+  shape = function(cr, width, height)
+    gears.shape.rounded_rect(cr, width, height, 9)
+  end,
   forced_height = 150,
 }
 
-helpers.add_hover_cursor(mem, "hand1")
-helpers.add_hover_cursor(cpu, "hand1")
-
 local music = wibox.widget {
   {
-    widget = require "ui.sidebar.music",
+    widget = require "ui.widget.music",
   },
   widget = wibox.container.background,
   bg = beautiful.bg_normal,
-  shape = helpers.rrect(9),
-  forced_height = 195,
+  shape = function(cr, width, height)
+    gears.shape.rounded_rect(cr, width, height, 9)
+  end,
+  forced_height = 175,
 }
 
 local weather = wibox.widget {
@@ -89,52 +83,29 @@ local weather = wibox.widget {
       widget = require "ui.widget.weather",
     },
     widget = wibox.container.margin,
+    left = 25,
     margins = 20,
   },
   widget = wibox.container.background,
   bg = beautiful.bg_normal,
-  shape = helpers.rrect(9),
-  forced_height = 120,
+  shape = function(cr, width, height)
+    gears.shape.rounded_rect(cr, width, height, 9)
+  end,
+  forced_height = 80,
 }
 
--- local notifs = wibox.widget {
---   widget = wibox.container.background,
---   bg = beautiful.bg_normal,
---   forced_height = 170,
---   shape = helpers.rrect(9)
---   {
---     widget = wibox.container.margin,
---     margins = 20,
---     {
---       widget = require "ui.sidebar.notifs",
---     },
---   },
--- }
-
-local pfp = wibox.widget {
+local notifs = wibox.widget {
   widget = wibox.container.background,
   bg = beautiful.bg_normal,
-  shape = helpers.rrect(9),
-  forced_height = 160,
+  forced_height = 170,
+  shape = function(cr, width, height)
+    gears.shape.rounded_rect(cr, width, height, 9)
+  end,
   {
     widget = wibox.container.margin,
     margins = 20,
     {
-      layout = wibox.layout.fixed.vertical,
-      spacing = 10,
-      {
-        widget = wibox.widget.imagebox,
-        image = gears.filesystem.get_configuration_dir() .. "/pfp.png",
-        clip_shape = gears.shape.circle,
-        forced_height = 90,
-        halign = "center",
-      },
-      {
-        widget = wibox.widget.textbox,
-        font = beautiful.font_name .. " Bold 12",
-        markup = "@nuxsh",
-        align = "center",
-      },
+      widget = require "ui.sidebar.notifs",
     },
   },
 }
@@ -145,36 +116,38 @@ local sidebar = awful.popup {
       time,
       {
         {
-          pfp,
-          cpu,
-          weather,
-          widget = wibox.layout.fixed.vertical,
-          spacing = 25,
-        },
-        {
-          date,
           mem,
           music,
           widget = wibox.layout.fixed.vertical,
-          spacing = 25,
+          spacing = 20,
+        },
+        {
+          date,
+          cpu,
+          weather,
+          widget = wibox.layout.fixed.vertical,
+          spacing = 20,
         },
         layout = wibox.layout.flex.horizontal,
-        spacing = 25,
+        spacing = 20,
       },
+      notifs,
       layout = wibox.layout.fixed.vertical,
-      spacing = 25,
+      spacing = 20,
     },
     widget = wibox.container.margin,
     forced_width = 375,
     margins = 25,
   },
   placement = function(c)
-    awful.placement.top_left(c, { margins = { top = 60, left = 15 } })
+    awful.placement.left(c, { margins = { top = 50, left = 10 } })
   end,
   ontop = true,
   visible = false,
   bg = beautiful.bg_dark,
-  shape = helpers.rrect(9),
+  shape = function(cr, width, height)
+    gears.shape.rounded_rect(cr, width, height, 10)
+  end,
 }
 
 local function toggle()

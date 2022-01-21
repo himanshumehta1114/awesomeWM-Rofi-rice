@@ -2,4 +2,4 @@
 
 require "squeals.cpu"
 require "squeals.ram"
-require "squeals.weather"
+-- require "squeals.weather"

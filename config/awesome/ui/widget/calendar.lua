@@ -2,7 +2,6 @@ local awful = require "awful"
 local beautiful = require "beautiful"
 local gears = require "gears"
 local wibox = require "wibox"
-local helpers = require "helpers"
 
 local styles = {}
 
@@ -19,8 +18,10 @@ styles.focus = {
   markup = function(t)
     return "<b>" .. t .. "</b>"
   end,
-  padding = 5,
-  shape = helpers.rrect(5),
+  padding = 2,
+  shape = function(cr, width, height)
+    gears.shape.rounded_rect(cr, width, height, 5)
+  end,
 }
 
 styles.header = {
@@ -54,52 +55,27 @@ local function decorate_cell(widget, flag, date)
   return ret
 end
 
-local calendar_widget = wibox.widget {
-  date = os.date "*t",
-  spacing = 15,
-  fn_embed = decorate_cell,
-  widget = wibox.widget.calendar.month,
-}
-
 local calendar = awful.popup {
   widget = {
     widget = wibox.container.margin,
     margins = 7,
-    calendar_widget,
+    {
+      date = os.date "*t",
+      spacing = 15,
+      fn_embed = decorate_cell,
+      widget = wibox.widget.calendar.month,
+    },
   },
   bg = beautiful.bg_dark,
   visible = false,
-  shape = helpers.rrect(10),
+  shape = function(cr, width, height)
+    gears.shape.rounded_rect(cr, width, height, 10)
+  end,
   placement = function(c)
     (awful.placement.top_right)(c, { margins = { top = 50, right = 10 } })
   end,
   ontop = true,
 }
-
-local current_month = os.date("*t").month
-calendar_widget:buttons(gears.table.join(
-  -- Left Click - Reset date to current date
-  awful.button({}, 1, function()
-    calendar_widget.date = os.date "*t"
-  end),
-  -- Scroll - Move to previous or next month
-  awful.button({}, 4, function()
-    new_calendar_month = calendar_widget.date.month - 1
-    if new_calendar_month == current_month then
-      calendar_widget.date = os.date "*t"
-    else
-      calendar_widget.date = { month = new_calendar_month, year = calendar_widget.date.year }
-    end
-  end),
-  awful.button({}, 5, function()
-    new_calendar_month = calendar_widget.date.month + 1
-    if new_calendar_month == current_month then
-      calendar_widget.date = os.date "*t"
-    else
-      calendar_widget.date = { month = new_calendar_month, year = calendar_widget.date.year }
-    end
-  end)
-))
 
 local function toggle()
   calendar.visible = not calendar.visible

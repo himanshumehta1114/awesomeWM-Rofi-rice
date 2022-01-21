@@ -1,4 +1,3 @@
-local helpers = require "helpers"
 return function(s)
   local awful = require "awful"
   local bling = require "modules.bling"
@@ -40,7 +39,9 @@ return function(s)
       end),
     },
     style = {
-      shape = helpers.squircle(1.3, 0),
+      shape = function(cr, width, height)
+        gears.shape.squircle(cr, width, height, 1.3, 0)
+      end,
     },
     widget_template = {
       {

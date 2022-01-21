@@ -1,5 +1,13 @@
 local awful = require "awful"
 local machi = require "modules.layout-machi"
+local xrandr = require("xrandr")
+
+-- Mouse bindings
+awful.mouse.append_global_mousebindings {
+  awful.button({}, 3, function()
+    Menu.main:toggle()
+  end),
+}
 
 -- Key bindings
 
@@ -32,16 +40,16 @@ awful.keyboard.append_global_keybindings {
   awful.key({}, "XF86AudioRaiseVolume", function()
     awful.spawn "pactl set-sink-volume @DEFAULT_SINK@ +5%"
   end),
-  awful.key({}, "XF86MonBrightnessUp", function()
-    awful.spawn "brightnessctl s +5%"
-  end),
-  awful.key({}, "XF86MonBrightnessDown", function()
-    awful.spawn "brightnessctl s 5%-"
-  end),
 }
 
 -- General Awesome keys
 awful.keyboard.append_global_keybindings {
+  awful.key({ modkey }, "w", function()
+    Menu.main:show()
+  end, {
+    description = "show main menu",
+    group = "awesome",
+  }),
   awful.key({ modkey, "Shift" }, "r", awesome.restart, { description = "reload awesome", group = "awesome" }),
   awful.key({ modkey, "Shift" }, "q", awesome.quit, { description = "quit awesome", group = "awesome" }),
   awful.key({ modkey }, "Return", function()
@@ -50,26 +58,23 @@ awful.keyboard.append_global_keybindings {
     description = "open a terminal",
     group = "launcher",
   }),
-  awful.key({ modkey }, "space", function()
-    awful.spawn "rofi -show drun"
+  awful.key({ modkey }, "r", function()
+    awful.spawn.with_shell("rofi -show filebrowser &>> /tmp/rofi.log")
   end, {
     description = "run prompt",
     group = "launcher",
   }),
-  awful.key({ modkey }, "b", function()
-    awful.spawn "brave"
-  end),
-  awful.key({ modkey }, "e", function()
-    awful.spawn "emacs"
-  end),
+  awful.key({ modkey }, "space", function()
+    awful.spawn.with_shell("rofi -show drun &>> /tmp/rofi.log")
+  end, {
+    description = "run prompt",
+    group = "launcher",
+  }),
   awful.key({ modkey }, "a", function()
     require "ui.sidebar"()
   end),
   awful.key({ modkey }, "s", function()
     require "ui.action_center"()
-  end),
-  awful.key({ modkey }, "w", function()
-    require "ui.theme_switcher"()
   end),
 }
 
@@ -201,6 +206,7 @@ awful.keyboard.append_global_keybindings {
       end
     end,
   },
+  awful.key({ modkey }, "d", function() xrandr.xrandr() end)
 }
 
 client.connect_signal("request::default_mousebindings", function()
